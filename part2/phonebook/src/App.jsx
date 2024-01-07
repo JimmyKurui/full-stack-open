@@ -3,13 +3,16 @@ import Filter from './components/Filter'
 import Contact from './components/Contact'
 import PersonForm from './components/PersonForm'
 import contactService from './services/contacts'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState()
   const [filter, setFilter] = useState('')
-  
+  const [message, setMessage] = useState(null)
+  const [messageType, setMessageType] = useState('success')
+
   useEffect(() => {
     console.log('effect')
     contactService.getAll()
@@ -26,6 +29,18 @@ const App = () => {
   const handleDelete = (id) => () => {
     confirm('Do you want to delete this contact?')
     contactService.deleteOne(id)
+      .then(() => {
+        setMessage('Deletion successful')
+        setTimeout(()=> setMessage(null), 3000)
+      })
+      .catch(() => {
+        setMessage(`${newName} already deleted from server`)
+        setMessageType('error')
+        setTimeout(()=> {
+          setMessage(null)
+          setMessageType('success')
+        }, 3000)
+      })
     setPersons(persons.filter(x => x.id !== id))
   }
 
@@ -43,6 +58,16 @@ const App = () => {
           setPersons(persons.map(x => x.id !== returnedContact.id ? x: returnedContact) )
           setNewName('')
           setNewNumber('')
+          setMessage('Update successful')
+          setTimeout(()=> setMessage(null), 3000)
+        })
+        .catch(() => {
+          setMessage(`${newName} update failed`)
+          setMessageType('error')
+          setTimeout(()=> {
+            setMessage(null)
+            setMessageType('success')
+          }, 3000)
         })
       return;
     }
@@ -57,6 +82,7 @@ const App = () => {
     
   return (
     <div>
+      <Notification message={message} type={messageType} /> 
       <h2>Phonebook</h2>
       <Filter handleChange={handleFilter} text={filter} />
       <PersonForm handleSubmit={handleSubmit} 
