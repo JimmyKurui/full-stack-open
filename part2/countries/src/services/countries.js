@@ -1,24 +1,15 @@
 import axios from 'axios'
-const baseUrl = 'https://studies.cs.helsinki.fi/restcountries'
+const baseUrl = 'https://studies.cs.helsinki.fi/restcountries/api/all'
+const countryUrl = 'https://studies.cs.helsinki.fi/restcountries/api/name'
 
-const getAll = () => {
-    const request = axios.get(baseUrl)
-    return request.then(response => response.data)
-}
-
-const create = newObject => {
-  const request = axios.post(baseUrl, newObject)
+const getCountries = () => {
+  const request = axios.get(baseUrl)
   return request.then(response => response.data)
 }
 
-const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
+const getCountry = (country) => {
+  const request = axios.get(countryUrl + '/' + country)
   return request.then(response => response.data)
 }
 
-const deleteOne = (id) => {
-    const request = axios.delete(`${baseUrl}/${id}`)
-    return request.then(response => response.data)
-}
-
-export default {getAll,create,update, deleteOne }
+export default {getCountries, getCountry}
